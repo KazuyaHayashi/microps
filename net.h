@@ -61,7 +61,7 @@ struct net_device_ops {
 
 struct net_iface {
     struct net_iface *next;
-    struct det_device *dev;
+    struct net_device *dev;
     int family;
     /* depends on implementation of protocols */
 };
