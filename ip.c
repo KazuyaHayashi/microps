@@ -22,11 +22,18 @@ struct ip_hdr {
     uint8_t options[0];
 };
 
+struct ip_protocol {
+    struct ip_protocol *next;
+    uint8_t type;
+    void (*handler)(const uint8_t *data, size_t len, ip_addr_t src, ip_addr_t dst, struct ip_iface *iface);
+};
+
 const ip_addr_t IP_ADDR_ANY       = 0x00000000;
 const ip_addr_t IP_ADDR_BROADCAST = 0xffffffff;
 
 /* NOTE: if you want to add/delete the entries after net_run(), you need to protect these lists with a mutex. */
 static struct ip_iface *ifaces;
+static struct ip_protocol protocols;
 
 int
 ip_addr_pton(const char *p, ip_addr_t *n)
@@ -299,6 +306,13 @@ ip_output(uint8_t protocol, const uint8_t *data, size_t len, ip_addr_t src, ip_a
         return -1;
     }
     return len;
+}
+
+/* NOTE: must not be call after net_run() */
+int
+ip_protocol_register(uint8_t type, void (*handler)(const uint8_t *data, size_t len, ip_addr_t src, ip_addr_t dst, struct ip_iface *iface))
+{
+
 }
 
 int
